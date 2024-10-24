@@ -41,3 +41,8 @@ body * {
 .wd-assignment {
   border-left: 5px solid green !important;
 }
+
+.wd-quiz-link {
+  text-decoration: none;
+  color: black;
+}
