@@ -1,26 +1,286 @@
 import { FaPlus } from "react-icons/fa6";
 import { Link, useParams } from "react-router-dom";
+import { useState } from "react";
+import { addQuestion, deleteQuestion, updateQuestion } from "./questionsReducer";
+import { useDispatch, useSelector } from "react-redux";
+import Editor from 'react-simple-wysiwyg';
+import { FaTrash } from "react-icons/fa";
+import { BsGripVertical } from "react-icons/bs";
+import { FaPencil } from "react-icons/fa6";
+
 
 export default function QuizEditorQuestions() {
     const {cid, qid} = useParams()
+    const dispatch = useDispatch()
+
+    const { questions } = useSelector((state: any) => state.questionsReducer);
+
+    const [showQuestionInput, setShowQuestionInput] = useState(false); 
+
+    const [newQuestionTitle, setNewQuestionTitle] = useState("");
+    const [newQuestionType, setNewQuestionType] = useState("");
+    const [newQuestionPoints, setNewQuestionPoints] = useState("");
+    const [newQuestionDescription, setNewQuestionDescription] = useState("");
+    const [newQuestionAnswers, setNewQuestionAnswers] = useState<string[]>([""]);
+    const [newQuestionCorrectAnswer, setNewQuestionCorrectAnswer] = useState("");
+
+    const [currentEditingQuestionId, setCurrentEditingQuestionId] = useState(null);
+
+
+
+    const handleAddQuestion = () => {
+        dispatch(addQuestion({
+            _id: new Date().getTime().toString(),
+            title: newQuestionTitle,
+            type: newQuestionType,
+            points: newQuestionPoints,
+            description: newQuestionDescription,
+            answers: newQuestionAnswers,
+            correct_answer: newQuestionCorrectAnswer,
+
+        }))
+        setShowQuestionInput(false);
+        resetQuestion();
+
+    }
+    const handleAnswerChange = (index: number, value: string) => {
+        const updatedAnswers = [...newQuestionAnswers];
+        updatedAnswers[index] = value; 
+        setNewQuestionAnswers(updatedAnswers);
+    };
+
+    const handleAddAnotherAnswer = () => {
+        setNewQuestionAnswers([...newQuestionAnswers, ""]);
+    };
+
+    const handleDeleteAnswer = (index: number) => {
+        const updatedAnswers = newQuestionAnswers.filter((_, i) => i !== index); 
+        setNewQuestionAnswers(updatedAnswers);
+    };
+
+    const handleCorrectAnswerChange = (index: number) => {
+        setNewQuestionCorrectAnswer(newQuestionAnswers[index]);
+    };
+
+    const handleUpdateQuestion = () => {
+        if (currentEditingQuestionId) {
+            dispatch(updateQuestion({
+                _id: currentEditingQuestionId,
+                title: newQuestionTitle,
+                type: newQuestionType,
+                points: newQuestionPoints,
+                description: newQuestionDescription,
+                answers: newQuestionAnswers,
+                correct_answer: newQuestionCorrectAnswer,
+            }));
+            resetQuestion();
+            setShowQuestionInput(false);
+            setCurrentEditingQuestionId(null); 
+        } else {
+            handleAddQuestion()
+        }
+    };
+
+
+    const resetQuestion = () => {
+        setNewQuestionDescription("");
+        setNewQuestionTitle("");
+        setNewQuestionPoints("");
+        setNewQuestionAnswers([""]); 
+        setNewQuestionCorrectAnswer(""); 
+    }
+
+    const handleEditQuestion = (question: any) => {
+        setNewQuestionTitle(question.title);
+        setNewQuestionType(question.type);
+        setNewQuestionPoints(question.points);
+        setNewQuestionDescription(question.description);
+        setNewQuestionAnswers(question.answers);
+        setNewQuestionCorrectAnswer(question.correct_answer);
+        setCurrentEditingQuestionId(question._id);
+        setShowQuestionInput(true); 
+    };
+
     return (
         <div className="container-fluid">
             <div id="wd-quiz-editor-questions" className="p-2 row">
 
+                {questions.filter((question:any) => question._id)
+                .map((question: any)=> (
+                    <div className="row mb-3" key={question._id}>
+                        <ul className="list-group rounded-0 border-0">
+                            <li className="list-group-item border-0">
+
+                                <ul className="list-group rounded-0 border">
+                            <li className="list-group-item border" style={{ backgroundColor: '#f0f0f0' }}>
+                                <div className="row-auto mb-2">
+                                <div className="col float-start me-2"><BsGripVertical /></div>
+                                <div className="col float-start">{question.title}</div>
+                                <div className="col float-end">{question.points} Pts</div>
+                                </div>
+                                </li>
+
+                                <li className="list-group-item border">
+                                    <div className="row float-end">
+                                        <div className="col"><FaPencil onClick={() => handleEditQuestion(question)}/></div>
+                                        <div className="col"><FaTrash onClick={() => dispatch(deleteQuestion(question._id))} /></div></div>
+                                    <br />
+                                <div className="row ms-4">
+                                    {question.description}
+                                </div>
+                                <br />
+                                </li>
+                                </ul>
+                            
+                                </li>
+
+                        </ul>
+
+                    </div>
+                ))}
+
             <div className="row-auto d-flex justify-content-center mb-3">
-            <button id="wd-add-question-btn" className="btn btn-lg btn-secondary fs-6 rounded-1 float-end me-1">
+            <button id="wd-add-question-btn" className="btn btn-lg btn-secondary fs-6 rounded-1 float-end me-1" onClick={()=>setShowQuestionInput(true)}>
             <FaPlus className="position-relative me-2" style={{ bottom: "1px"}} />
             Add Question</button>
             </div>
 
             <hr />
 
+            {showQuestionInput && (
+                <>
+                <div className="row mb-5">
+                <div className="col-auto">
+                <input id="wd-question-title" placeholder="New Question" type="text" className="form-control" style={{width:"100%"}}
+                onChange={(e) => setNewQuestionTitle(e.target.value)} />
+                </div>
+
+
+                <div className="col-auto">
+                    <select id="wd-question-type" className="form-select" onChange={(e) => setNewQuestionType(e.target.value.toString())}>
+                        <option value="Select Question Type">Select Question Type</option>
+                        <option value="Multiple Choice">Multiple Choice</option>
+                        <option value="True or False">True or False</option>
+                        <option value="Fill in the Blank">Fill in the Blank</option>
+                    </select>
+                    </div>
+
+                <div className="col-auto"> 
+                <label htmlFor="wd-question-points" className="form-label float-end mt-1">Pts</label>
+                <input id="wd-question-points" type="text" className="form-control float-end me-3" style={{width:"20%"}}
+                onChange={(e) => setNewQuestionPoints(e.target.value)} />
+                </div>
+                </div>
+
+                <hr />
+
+                <div className="row">
+                    <p>Enter your question and multiple answers, then select the one correct answer</p>
+
+                </div>
+                <div className="row">
+                    <h5 style={{fontWeight:"bold"}}>Question:</h5>
+                </div>
+
+                <div className="row mb-4">
+                    <Editor value={newQuestionDescription} onChange={(e) => setNewQuestionDescription(e.target.value)}/>
+                </div>
+
+{/* ---------------------------------------MULTIPLE CHOICE----------------------------------------- */}
+                {newQuestionType === "Multiple Choice" && (
+                            <>
+                                <div className="row">
+                                    <h5 style={{ fontWeight: "bold" }}>Answers:</h5>
+                                </div>
+                                {newQuestionAnswers.map((answer, index) => (
+                                    <div className="row mb-1" key={index}>
+                                        <ul className="list-group rounded-0 border">
+                                            <li className="list-group-item border-0">
+                                                <div className="row">
+                                                    <div className="col-auto" >
+                                                        <input type="checkbox" className="me-3" id={`wd-answer-${index}`} 
+                                                        onChange={() => handleCorrectAnswerChange(index)} 
+                                                        />
+                                                    </div>
+                                                    <div className="col-auto">
+                                                        <label htmlFor={`wd-answer-${index}`} className="form-label">Possible Answer</label>
+                                                    </div>
+                                                    <div className="col-auto">
+                                                        <input id={`wd-answer-${index}`} type="text" className="form-control me-3"
+                                                            value={answer} 
+                                                            onChange={(e) => handleAnswerChange(index, e.target.value)} />
+                                                    </div><FaTrash className="col-auto mt-2" onClick={() => handleDeleteAnswer(index)} />
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                ))}
+                                <div className="row-auto float-end">
+                                    <button id="wd-add-answer-btn" className="btn btn-link btn-lg fs-6 rounded-1 float-end me-1" onClick={handleAddAnotherAnswer}>
+                                        <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
+                                        Add Another Answer
+                                    </button>
+                                </div>
+                            </>
+                        )}
+{/* ----------------------------------------------------------------------------------------------- */}
+
+                
+
+{/* ---------------------------------------TRUE OR FALSE------------------------------------------- */}                        
+                {newQuestionType==="True or False" && (
+                    <div className="row">
+                        <h5 style={{fontWeight:"bold"}}>Answers: </h5>
+
+                    </div>
+                )}
+{/* ------------------------------------------------------------------------------------------------ */}
+
+                                
+
+
+
+{/* ---------------------------------------FILL IN THE BLANKS----------------------------------------- */}
+                {newQuestionType=="Fill in the Blank" && (
+                    <div className="row">
+                        <h5 style={{fontWeight:"bold"}}>Answers:</h5>
+
+                    </div>
+                )}
+{/* ------------------------------------------------------------------------------------------------- */}
+                
+                
+                
+
+
+
+
             <div className="row mt-2 mb-4">
             <div className="col">
-                <Link to={`/Kanbas/Courses/${cid}/Quizzes/${qid}`}>
-                    <button className="btn btn-secondary rounded-1 me-2" type="submit">Cancel</button>
+
+                <button className="btn btn-secondary rounded-1 me-2" type="submit" onClick={ () => {resetQuestion(); setShowQuestionInput(false);} }>Cancel</button>
+
+                <button className="btn btn-danger rounded-1" type="submit" 
+                    onClick={
+                        handleUpdateQuestion
+                        
+                    }>Update Question</button>
+
+            </div>
+            </div>
+            </>
+            )
+
+            }
+
+
+            <hr />
+            <div className="row mt-2 mb-4">
+            <div className="col">
+                <Link to={`/Kanbas/Courses/${cid}/Quizzes/${qid}/Editor/Details`}>
+                    <button className="btn btn-secondary rounded-1 me-2" type="submit" >Cancel</button>
                 </Link>
-                <Link to={`/Kanbas/Courses/${cid}/Quizzes/${qid}`}>
+                <Link to={`/Kanbas/Courses/${cid}/Quizzes/${qid}/Editor/Details`}>
                     <button className="btn btn-danger rounded-1" type="submit">Save</button>
                 </Link>
             </div>
@@ -34,3 +294,4 @@ export default function QuizEditorQuestions() {
     )
 
 }
+

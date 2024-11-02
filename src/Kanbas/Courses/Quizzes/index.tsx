@@ -1,5 +1,5 @@
 import * as db from "../../Database";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { IoRocketOutline } from "react-icons/io5";
 import AssignmentControlButtons from "../Assignments/AssignmentControlButtons";
@@ -8,14 +8,33 @@ import StudentViewButton from "./StudentViewButton";
 import { FaPlus } from "react-icons/fa6";
 import { FiMoreVertical } from "react-icons/fi";
 import { useViewContext } from "./View";
+import { useDispatch, useSelector } from "react-redux";
+import { addQuiz } from "./quizzesReducer";
 
 
 export default function Quizzes() {
     const {cid} = useParams() 
-    const quizzes = db.quizzes;
+    const {quizzes} =  useSelector((state: any) => state.quizzesReducer);
     const { isStudentView, toggleView } = useViewContext();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-
+    const handleAddQuiz = () => {
+        const newQuizId = quizzes.length + 1; 
+        const newQuiz = {
+            _id: newQuizId,
+            title: `New Quiz ${newQuizId}`,
+            course: cid,
+            availability: "Available",
+            // available_from: new Date().toLocaleDateString(),
+            // available_until: new Date().toLocaleDateString(),
+            // due_date: new Date().toLocaleDateString(),
+            // points: 0,
+            // number_questions: 0,
+        };
+        dispatch(addQuiz(newQuiz));
+        navigate(`/Kanbas/Courses/${cid}/Quizzes/${newQuizId}/Editor/`);
+    };
     return (
         <>
         <StudentViewButton
@@ -39,7 +58,8 @@ export default function Quizzes() {
             </div>
 
             <div className="col text-nowrap">
-            <button id="wd-add-quiz-btn" className="btn btn-lg btn-danger fs-6 rounded-1 float-end me-1">
+            <button id="wd-add-quiz-btn" className="btn btn-lg btn-danger fs-6 rounded-1 float-end me-1"
+            onClick = {()=>navigate(`/Kanbas/Courses/${cid}/Quizzes/new/Editor/`)}>
             <FaPlus className="position-relative me-2" style={{ bottom: "1px"}} />
             Quizzes</button>
             </div>
