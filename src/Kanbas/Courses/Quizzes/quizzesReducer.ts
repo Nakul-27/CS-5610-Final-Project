@@ -36,11 +36,11 @@ const quizzesSlice = createSlice({
                 description: action.payload.description,
                 questions: action.payload.questions,
             };
-            state.quizzes=[...state.quizzes, newQuiz];
+            state.quizzes = [...state.quizzes, newQuiz];
 
         },
         deleteQuiz: (state, { payload: quizId }) => {
-            state.quizzes = state.quizzes.filter((q:any) => q._id !==quizId)
+            state.quizzes = state.quizzes.filter((q: any) => q._id !== quizId)
 
         },
 

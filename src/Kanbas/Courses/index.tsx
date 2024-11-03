@@ -30,16 +30,16 @@ export default function Courses() {
         </div>
         <div className="flex-fill">
           <ViewProvider>
-          <Routes>
-            <Route path="Home" element={<Home />} />
-            <Route path="Modules" element={<Modules />} />
-            <Route path="Assignments" element={<Assignments />} />
-            <Route path="Assignments/:id" element={<AssignmentEditor />} />
-            <Route path="Quizzes" element={<Quizzes />} />
-            <Route path="Quizzes/:qid" element={<QuizDetails />} />
-            <Route path="Quizzes/:qid/Editor/*" element={<EditorNavigation />} />
-            <Route path="People" element={<PeopleTable />} />
-          </Routes>
+            <Routes>
+              <Route path="Home" element={<Home />} />
+              <Route path="Modules" element={<Modules />} />
+              <Route path="Assignments" element={<Assignments />} />
+              <Route path="Assignments/:id" element={<AssignmentEditor />} />
+              <Route path="Quizzes" element={<Quizzes />} />
+              <Route path="Quizzes/:qid" element={<QuizDetails />} />
+              <Route path="Quizzes/:qid/Editor/*" element={<EditorNavigation />} />
+              <Route path="People" element={<PeopleTable />} />
+            </Routes>
           </ViewProvider>
         </div>
 

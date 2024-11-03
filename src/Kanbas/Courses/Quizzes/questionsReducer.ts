@@ -19,11 +19,11 @@ const questionsSlice = createSlice({
                 answers: action.payload.answers,
                 correct_answer: action.payload.correct_answer,
             };
-            state.questions=[...state.questions, newQuestion];
+            state.questions = [...state.questions, newQuestion];
 
         },
         deleteQuestion: (state, { payload: questionId }) => {
-            state.questions = state.questions.filter((q:any) => q._id !==questionId)
+            state.questions = state.questions.filter((q: any) => q._id !== questionId)
 
         },
 
