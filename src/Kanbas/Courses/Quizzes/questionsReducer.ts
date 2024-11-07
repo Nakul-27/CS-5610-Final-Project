@@ -1,17 +1,24 @@
 import { createSlice } from "@reduxjs/toolkit";
-import quizzes from "../../Database/quizzes.json"
 
 const initialState = {
-    questions: quizzes.flatMap(quiz => quiz.questions),
+    questions: [] as any,
 };
 
 const questionsSlice = createSlice({
     name: "questions",
     initialState,
     reducers: {
+
+        setQuestions: (state, action) => {
+            state.questions = action.payload;
+
+        },
+
         addQuestion: (state, action) => {
             const newQuestion: any = {
                 _id: action.payload._id,
+                quizId:action.payload.quizId,
+                courseId: action.payload.courseId,
                 title: action.payload.title,
                 type: action.payload.type,
                 points: action.payload.points,
@@ -20,25 +27,41 @@ const questionsSlice = createSlice({
                 correct_answer: action.payload.correct_answer,
             };
             state.questions = [...state.questions, newQuestion];
-
+            
         },
-        deleteQuestion: (state, { payload: questionId }) => {
-            state.questions = state.questions.filter((q: any) => q._id !== questionId)
+  
 
-        },
+        deleteQuestion: (state, {payload:  questionId }) => {
 
-        updateQuestion: (state, { payload: updatedQuestion }) => {
+            if (questionId) {
+
+            state.questions = state.questions.filter((q: any) => q._id !== questionId)}},
+
+
+        updateQuestion: (state, action) => {
+
+            const updatedQuestion = action.payload; 
+
             state.questions = state.questions.map((q: any) =>
                 q._id === updatedQuestion._id ? updatedQuestion : q
             );
+        
         },
-        editQuestion: (state, { payload: questionId }) => {
+
+        editQuestion: (state, { payload: { questionId } }) => {
+            if (questionId){
             state.questions = state.questions.map((q: any) =>
                 q._id === questionId ? { ...q, editing: true } : q
-            ) as any;
+            ) as any;}
+        },
+    
+
+
+        resetQuestions: (state) => {
+            state.questions=[];
         }
     }
 });
 
-export const { addQuestion, deleteQuestion, updateQuestion, editQuestion } = questionsSlice.actions;
+export const { setQuestions, addQuestion, deleteQuestion, updateQuestion, editQuestion, resetQuestions } = questionsSlice.actions;
 export default questionsSlice.reducer;

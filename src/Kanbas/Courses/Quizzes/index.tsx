@@ -1,4 +1,3 @@
-import * as db from "../../Database";
 import { useNavigate, useParams } from "react-router";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { IoRocketOutline } from "react-icons/io5";
@@ -9,32 +8,19 @@ import { FaPlus } from "react-icons/fa6";
 import { FiMoreVertical } from "react-icons/fi";
 import { useViewContext } from "./View";
 import { useDispatch, useSelector } from "react-redux";
-import { addQuiz } from "./quizzesReducer";
+import { deleteQuiz } from "./quizzesReducer";
+import { FaTrash } from "react-icons/fa";
+import QuizRemove from "./QuizRemove";
 
 
-export default function Quizzes() {
+export default function Quizzes({newQuizId, quizzes}:{newQuizId:any, quizzes:any}) {
     const { cid } = useParams()
-    const { quizzes } = useSelector((state: any) => state.quizzesReducer);
     const { isStudentView, toggleView } = useViewContext();
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const [quizToDelete, setQuizToDelete] = useState("")
 
-    const handleAddQuiz = () => {
-        const newQuizId = quizzes.length + 1;
-        const newQuiz = {
-            _id: newQuizId,
-            title: `New Quiz ${newQuizId}`,
-            course: cid,
-            availability: "Available",
-            // available_from: new Date().toLocaleDateString(),
-            // available_until: new Date().toLocaleDateString(),
-            // due_date: new Date().toLocaleDateString(),
-            // points: 0,
-            // number_questions: 0,
-        };
-        dispatch(addQuiz(newQuiz));
-        navigate(`/Kanbas/Courses/${cid}/Quizzes/${newQuizId}/Editor/`);
-    };
+
     return (
         <>
             <StudentViewButton
@@ -59,12 +45,14 @@ export default function Quizzes() {
 
                             <div className="col text-nowrap">
                                 <button id="wd-add-quiz-btn" className="btn btn-lg btn-danger fs-6 rounded-1 float-end me-1"
-                                    onClick={() => navigate(`/Kanbas/Courses/${cid}/Quizzes/new/Editor/`)}>
+                                    onClick={() =>{navigate(`/Kanbas/Courses/${cid}/Quizzes/${newQuizId}/Editor/Details`);}}>
+                                        
                                     <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
                                     Quizzes</button>
                             </div>
                         </div> <hr /></>) : null}
                 </div>
+
 
                 <div className="row">
                     <ul id="wd-quiz-list" className="list-group rounded-0">
@@ -93,7 +81,15 @@ export default function Quizzes() {
 
                                             {isStudentView ?
                                                 <div className="ms-auto d-flex align-items-center">
-                                                    <AssignmentControlButtons />
+                                                    <FaTrash data-bs-toggle="modal" data-bs-target="#wd-add-quiz-dialog" onClick = {() => setQuizToDelete(quiz._id)}/><AssignmentControlButtons />
+                                                    <QuizRemove
+                                                            dialogTitle="Delete Quiz"
+                                                            deleteQuiz={(id) => {
+                                                                dispatch(deleteQuiz(id));
+                                                                setQuizToDelete(""); 
+                                                            }}
+                                                            quizId={quizToDelete} 
+                                                        />
                                                 </div> : null}
                                         </li>
                                     ))
@@ -105,8 +101,6 @@ export default function Quizzes() {
 
 
             </div>
-
-
 
         </>
     );

@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import quizzes from "../../Database/quizzes.json"
+
 
 
 const initialState = {
-    quizzes: quizzes,
+    quizzes: [] as any,
 };
 
 const quizzesSlice = createSlice({
@@ -40,14 +40,16 @@ const quizzesSlice = createSlice({
 
         },
         deleteQuiz: (state, { payload: quizId }) => {
+            console.log(state.quizzes)
             state.quizzes = state.quizzes.filter((q: any) => q._id !== quizId)
 
         },
 
         updateQuiz: (state, { payload: updatedQuiz }) => {
+
             state.quizzes = state.quizzes.map((q: any) =>
                 q._id === updatedQuiz._id ? updatedQuiz : q
-            );
+            ) as any;
         },
         editQuiz: (state, { payload: quizId }) => {
             state.quizzes = state.quizzes.map((q: any) =>
@@ -57,5 +59,8 @@ const quizzesSlice = createSlice({
     }
 });
 
-export const { addQuiz, deleteQuiz, updateQuiz, editQuiz } = quizzesSlice.actions;
+export const { addQuiz, deleteQuiz, updateQuiz, editQuiz} = quizzesSlice.actions;
 export default quizzesSlice.reducer;
+
+
+

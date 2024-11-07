@@ -1,15 +1,16 @@
 import { useParams } from "react-router";
-import * as db from "../../Database";
 import { GrEdit } from "react-icons/gr";
 import StudentViewButton from "./StudentViewButton";
-import { useState } from "react";
 import { useViewContext } from "./View";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function QuizDetails() {
     const { cid, qid } = useParams()
-    const quizzes = db.quizzes;
+    const { quizzes } = useSelector((state: any) => state.quizzesReducer);
+
     const { isStudentView, toggleView } = useViewContext();
+
     return (
         <>
             <StudentViewButton
@@ -21,10 +22,11 @@ export default function QuizDetails() {
 
                 {isStudentView ?
                     (<><div className="p-5 row d-flex justify-content-center">
-                        <div className="col-auto"><button id="wd-preview-btn" className="btn btn-lg btn-secondary fs-6 rounded-1 float-end me-1">
-                            Preview</button></div>
+                        <div className="col-auto"><Link to={`/Kanbas/Courses/${cid}/Quizzes/${qid}/Preview`}><button id="wd-preview-btn" className="btn btn-lg btn-secondary fs-6 rounded-1 float-end me-1">
+                            Preview</button></Link></div>
 
-                        <div className="col-auto"><Link to={`/Kanbas/Courses/${cid}/Quizzes/${qid}/Editor/Details`}><button id="wd-edit-btn" className="btn btn-lg btn-secondary fs-6 rounded-1 float-end me-1">
+                        <div className="col-auto"><Link to={`/Kanbas/Courses/${cid}/Quizzes/${qid}/Editor/Details`}><button id="wd-edit-btn" className="btn btn-lg btn-secondary fs-6 rounded-1 float-end me-1"
+                        >
                             <GrEdit className="me-1" />Edit</button></Link></div>
                     </div>
                         <hr />
