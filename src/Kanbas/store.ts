@@ -1,12 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
-import questionsReducer from "./Courses/Quizzes/questionsReducer";
-import quizzesReducer from "./Courses/Quizzes/quizzesReducer"
+import modulesReducer from "./Courses/Modules/reducer";
+import accountReducer from "./Account/reducer";
+import enrollmentReducer from "./reducer";
 
 const store = configureStore({
-
   reducer: {
-    questionsReducer,
-    quizzesReducer,
+    modulesReducer,
+    accountReducer,
+    enrollmentReducer
   },
 });
+
 export default store;
