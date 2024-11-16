@@ -44,6 +44,7 @@ const questionsSlice = createSlice({
 
             state.questions = state.questions.map((q: any) =>
                 q._id === updatedQuestion._id ? updatedQuestion : q
+               
             );
         
         },

@@ -1,18 +1,33 @@
 import { useSelector } from "react-redux";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { CgDanger } from "react-icons/cg";
 import { useState } from "react";
 import { IoMdArrowDropright } from "react-icons/io";
 import { IoMdArrowDropleft } from "react-icons/io";
 import { GrEdit } from "react-icons/gr";
 import { FaRegQuestionCircle } from "react-icons/fa";
+import { useRef, useEffect } from "react";
+
 
 export default function QuizPreview() {
     const { quizzes } = useSelector((state: any) => state.quizzesReducer);
     const { cid, qid } = useParams()
+    const navigate = useNavigate();
     const quiz = quizzes.find((quiz: any) => quiz.course == cid && quiz._id == qid);
 
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [userAnswers, setUserAnswers] = useState<Record<string, any>>({});
+    const questionContainerRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        if (questionContainerRef.current) {
+            questionContainerRef.current.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+    }, [currentQuestionIndex]);
+    
     const questions = quiz.questions || [];
 
     const handleNext = () => {
@@ -26,6 +41,19 @@ export default function QuizPreview() {
             setCurrentQuestionIndex(currentQuestionIndex - 1);
         }
     };
+
+    const handleAnswerSelection = (questionId: string, answer: any) => {
+        setUserAnswers((prev) => ({
+            ...prev,
+            [questionId]: answer,
+        }));
+    };
+
+    const handleSubmit = () => {
+        navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/Results`, { state: { userAnswers, questions, quizTitle: quiz.title  } });
+    };
+
+
     return (
         <div className="container-fluid" id="wd-quiz-preview">
 
@@ -50,7 +78,7 @@ export default function QuizPreview() {
 
                 {questions.length > 0 && (
                     <>
-                     <div className="row mt-3">
+                     <div className="row mt-3" ref={questionContainerRef}>
 
                         <ul className="list-group rounded-0 border-0">
                             <li className="list-group-item border-0">
@@ -80,7 +108,10 @@ export default function QuizPreview() {
                                             <hr className="ms-4" style={{width:"95%"}}/>
                                             <div className="row">
                                                 <div className="col-auto ms-5" >
-                                                    <input type="checkbox" className="me-3" id={`wd-answer-${index}`}/>
+                                                    <input type="checkbox" 
+                                                    checked={userAnswers[questions[currentQuestionIndex]._id] === answer}
+                                                    onChange={() => handleAnswerSelection(questions[currentQuestionIndex]._id, answer)}
+                                                    className="me-3" id={`wd-answer-${index}`}/>
                                                 </div>
                                                 <div className="col-auto">
                                                 <label htmlFor={`wd-answer-${index}`} className="form-label">
@@ -104,6 +135,8 @@ export default function QuizPreview() {
                                                         type="radio"
                                                         name="trueFalseAnswer"
                                                         className="ms-3"
+                                                        checked={userAnswers[questions[currentQuestionIndex]._id] === "True"}
+                                                        onChange={() => handleAnswerSelection(questions[currentQuestionIndex]._id, "True")}
                                                     />
                                                 </div>
                                                 <div className="col">True</div>
@@ -115,6 +148,8 @@ export default function QuizPreview() {
                                                         type="radio"
                                                         name="trueFalseAnswer"
                                                         className="ms-3"
+                                                        checked={userAnswers[questions[currentQuestionIndex]._id] === "False"}
+                                                        onChange={() => handleAnswerSelection(questions[currentQuestionIndex]._id, "False")}
                                                     />
                                                 </div>
                                                 <div className="col">False</div>
@@ -132,7 +167,9 @@ export default function QuizPreview() {
                                             <div className="row mb-2">
                                             <hr className="ms-4" style={{width:"95%"}}/>
                                             <div className="row"> 
-                                                <input type="text" name="FillInBlank" className="ms-4" style={{width:"10%"}}/>
+                                                <input type="text" name="FillInBlank" className="ms-4" style={{width:"10%"}}
+                                                value={userAnswers[questions[currentQuestionIndex]._id] || ""}
+                                                onChange={(e) => handleAnswerSelection(questions[currentQuestionIndex]._id, e.target.value)}/>
                                                 </div>
                                                 
                                             </div>
@@ -174,7 +211,8 @@ export default function QuizPreview() {
 
                         <div className="row border border-1 border-dark border p-3 mb-5">
                             <div className="col">
-                            <button className="btn btn-secondary float-end  rounded-0 border border-light position-relative end-10" style={{width:"15%"}}>
+                            <button className="btn btn-secondary float-end  rounded-0 border border-light position-relative end-10" style={{width:"15%"}}
+                            onClick={handleSubmit}>
                                 Submit Quiz
                             </button>
                             </div>
@@ -184,7 +222,15 @@ export default function QuizPreview() {
                         <br /><br /><br />
 
                         <div className="row border bg-light mb-4">
-                          <div className="col-auto mt-3 ms-1"><GrEdit /> </div><div className="col-auto mt-3"><p>Keep editing this quiz</p></div>
+                            <div className="col-auto mt-3 ms-1"><GrEdit /></div>
+                            <div className="col-auto mt-3">
+                                <p
+                                    style={{ cursor: "pointer", color: "blue", textDecoration: "underline" }}
+                                    onClick={() => navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/Editor/Details`)}
+                                >
+                                    Keep editing this quiz
+                                </p>
+                            </div>
                         </div>
                         
                     </>
@@ -194,7 +240,12 @@ export default function QuizPreview() {
                             <div className="row"><h3>Questions</h3></div>
 
                             {questions.map((q:any, index:number)=>(
-                                <div className="row text-danger ms-4" key={index}>
+                                <div
+                                className="row text-danger ms-4"
+                                key={index}
+                                style={{ cursor: "pointer" }}
+                                onClick={() => setCurrentQuestionIndex(index)}
+                            >
                                     <div className="col-auto"><FaRegQuestionCircle /></div>
                                     <div className="col-auto">Question {`${index+1}`}</div>
                                 </div>
@@ -209,4 +260,4 @@ export default function QuizPreview() {
 ))}
         </div>
     );
-}
+}   

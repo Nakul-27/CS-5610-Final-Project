@@ -14,6 +14,7 @@ import EditorNavigation from "./Quizzes/EditorNavigation";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import QuizPreview from "./Quizzes/QuizPreview";
+import QuizPreviewResults from "./Quizzes/QuizPreviewResults";
 
 export default function Courses() {
   const { cid } = useParams();
@@ -47,6 +48,11 @@ export default function Courses() {
               <Route path="Quizzes/:qid" element={<QuizDetails />} />
               <Route path="Quizzes/:qid/Editor/*" element={<EditorNavigation newQuizId={newQuizId} quizzes={quizzes}/>} />
               <Route path="Quizzes/:qid/Preview/*" element={<QuizPreview />} />
+
+
+              <Route path="Quizzes/:qid/Results" element={<QuizPreviewResults />} />
+
+
               <Route path="People" element={<PeopleTable />} />
             </Routes>
           </ViewProvider>
