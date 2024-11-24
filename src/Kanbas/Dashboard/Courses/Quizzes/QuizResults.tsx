@@ -11,9 +11,9 @@ export default function QuizResults() {
 
 
     const quiz = quizzes.find((quiz:any)=>quiz.course === cid && quiz._id === qid)
-    const { currentUserId } = useSelector((state: any) => state.accountReducer);
+    const { currentUser } = useSelector((state: any) => state.accountReducer);
     const {results} = useSelector((state:any)=> state.resultsReducer)
-    const result = results.find((res:any)=>res.quizId === qid && res.courseId=== cid && res.userId === currentUserId)
+    const result = results.find((res:any)=>res.quizId === qid && res.courseId=== cid && res.userId === currentUser._id)
 
  
 

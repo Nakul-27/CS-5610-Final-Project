@@ -15,13 +15,14 @@ export default function QuizDetails() {
     const { isStudentView, toggleView } = useViewContext();
 
     const navigate = useNavigate()
-    const { currentUserId } = useSelector((state: any) => state.accountReducer);
+    const { currentUser } = useSelector((state: any) => state.accountReducer);
     
     const {results} = useSelector((state:any)=> state.resultsReducer)
-    const result = results.find((res:any)=>res.quizId === qid && res.courseId=== cid && res.userId === currentUserId)
+    const result = results.find((res:any)=>res.quizId === qid && res.courseId=== cid && res.userId === currentUser._id)
 
     return (
         <>
+        
             <ProtectedContentEnrollment>
 
 
@@ -46,6 +47,7 @@ export default function QuizDetails() {
                                     </tbody>
                                 </table>
                             </div>
+             
 
                             {(result?.attempt==null )&& (
                                 <div className="row-auto d-flex justify-content-center">

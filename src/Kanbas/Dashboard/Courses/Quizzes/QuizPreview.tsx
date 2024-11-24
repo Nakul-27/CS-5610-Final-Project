@@ -14,8 +14,8 @@ export default function TakeQuiz() {
     const question = questions.filter((q:any) => q.quizId==qid && q.courseId==cid)
     const {quizzes} = useSelector((state:any)=> state.quizzesReducer)
     const {results} = useSelector((state:any)=> state.resultsReducer)
-    const { currentUserId } = useSelector((state: any) => state.accountReducer);
-    const result = results.find((res:any)=> res.quizId === qid && res.courseId=== cid && res.userId === currentUserId)
+    const { currentUser } = useSelector((state: any) => state.accountReducer);
+    const result = results.find((res:any)=> res.quizId === qid && res.courseId=== cid && res.userId === currentUser._id)
 
 
     const dispatch = useDispatch()
@@ -37,7 +37,7 @@ export default function TakeQuiz() {
             _id: (results.length + 1).toString(),
             quizId: qid,
             courseId: cid,
-            userId: currentUserId,
+            userId: currentUser._id,
             score: calculateScore(),
             answers: userAnswers,
             timetaken: calculateTimeTaken().toString(),
