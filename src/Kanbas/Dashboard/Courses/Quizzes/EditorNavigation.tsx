@@ -6,9 +6,11 @@ import { Navigate, Route, Routes, useNavigate, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { addQuiz,updateQuiz } from "./quizzesReducer";
 import { deleteQuestion, setQuestions } from "./questionsReducer";
+import * as coursesClient from "../client";
+import * as quizzesClient from "../Quizzes/client";
 
 
-export default function EditorNavigation({newQuizId, quizzes}:{newQuizId:any, quizzes:any}) {
+export default function EditorNavigation({newQuizId, quizzes, setPublished, setNewPublished}:{newQuizId:any, quizzes:any, setPublished:any, setNewPublished:any}) {
     const { cid, qid } = useParams()
 
     const quiz = quizzes.find((q:any) => q._id === qid && q.course === cid);
@@ -34,6 +36,7 @@ export default function EditorNavigation({newQuizId, quizzes}:{newQuizId:any, qu
     const [setQuizOneQuestionAtATime, setNewQuizOneQuestionAtATime] = useState(quiz ? quiz.one_question_at_a_time : true)
     const [setQuizWebcamRequired, setNewQuizWebcamRequired] = useState(quiz ? quiz.webcam_required : false)
     const [setQuizLockQuestions, setNewQuizLockQuestions] = useState(quiz ? quiz.lock_questions_after_answering : false)
+    
 
     const [setQuizDescription, setNewQuizDescription] = useState(quiz ? quiz.description : "")
     const [setQuizQuestions, setNewQuizQuestions] = useState(quiz ? quiz.questions : [])
@@ -61,6 +64,18 @@ export default function EditorNavigation({newQuizId, quizzes}:{newQuizId:any, qu
         dispatch(setQuestions([...previousQuestions]))
     }
 
+    const createNewQuiz = async (newQuiz:any) => {
+        if (!cid) return;
+
+        const quiz = await coursesClient.createQuizForCourse(cid, newQuiz);
+        dispatch(addQuiz(quiz));
+    }
+
+    const updateQuiz_ = async (quiz: any) => {
+        await quizzesClient.updateQuiz(quiz);
+        dispatch(updateQuiz(quiz))
+      };
+
     const handleUpdateQuiz = () => {
 
  
@@ -71,7 +86,7 @@ export default function EditorNavigation({newQuizId, quizzes}:{newQuizId:any, qu
         
 
         if (quiz) {
-            dispatch(updateQuiz({
+            const updatedQuiz = {
                 _id: qid,
                 title: setQuizTitle,
                 course: cid,
@@ -94,12 +109,14 @@ export default function EditorNavigation({newQuizId, quizzes}:{newQuizId:any, qu
                 webcam_required: setQuizWebcamRequired,
                 lock_questions_after_answering: setQuizLockQuestions,
                 description: setQuizDescription,
-                published: false,
+                published: setPublished,
                 questions: setQuizQuestions,
-            }))
+            }
+
+            updateQuiz_(updatedQuiz)
         
         } else {
-            dispatch(addQuiz({                
+            const newQuiz = {                
                 _id: newQuizId,
                 title: setQuizTitle,
                 course: cid,
@@ -122,8 +139,10 @@ export default function EditorNavigation({newQuizId, quizzes}:{newQuizId:any, qu
                 webcam_required: setQuizWebcamRequired,
                 lock_questions_after_answering: setQuizLockQuestions,
                 description: setQuizDescription,
-                published: false,
-                questions: setQuizQuestions,}))   
+                published: setPublished,
+                questions: setQuizQuestions,}
+
+            createNewQuiz(newQuiz)  
         }
     
     }

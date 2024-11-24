@@ -205,7 +205,7 @@ export default function QuizEditorDetails({setQuizTitle, setQuizAvailableFrom, s
                 <div className="row mt-2 mb-4">
                     <div className="col d-flex justify-content-center">
                             <button className="btn btn-secondary rounded-1 me-2" type="submit" onClick={()=> {handleCancelQuiz()}}>Cancel</button>
-                        <Link to={`/Kanbas/Courses/${cid}/Quizzes/${qid}`}>
+                        <Link to={`/Kanbas/Courses/${cid}/Quizzes`}>
                             <button className="btn btn-danger rounded-1" type="submit" onClick = {()=>{ handleUpdateQuiz()}}>Save</button>
                         </Link>
                     </div>

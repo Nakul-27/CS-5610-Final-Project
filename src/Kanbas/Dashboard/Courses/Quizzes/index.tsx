@@ -2,13 +2,13 @@ import { useNavigate, useParams } from "react-router";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { IoEllipsisVertical, IoRocketOutline } from "react-icons/io5";
 import AssignmentControlButtons from "../Assignments/AssignmentsControlButtons"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import StudentViewButton from "./StudentViewButton";
 import { FaCircle, FaPlus } from "react-icons/fa6";
 import { FiMoreVertical } from "react-icons/fi";
 import { useViewContext } from "./View";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteQuiz, publishQuiz, unpublishQuiz } from "./quizzesReducer";
+import { deleteQuiz, publishQuiz, setQuizzes, unpublishQuiz, updateQuiz } from "./quizzesReducer";
 import { FaCheckCircle, FaTrash } from "react-icons/fa";
 import QuizRemove from "./QuizRemove";
 import ProtectedContent from "../../../Account/ProtectedContent";
@@ -17,26 +17,41 @@ import { deleteAllQuestions} from "./questionsReducer";
 
 import GreenCheckmark from "../Modules/GreenCheckmark";
 import { CiNoWaitingSign } from "react-icons/ci";
+import * as coursesClient from "../client";
+import * as quizzesClient from "../Quizzes/client";
 
 
-export default function Quizzes({newQuizId, quizzes}:{newQuizId:any, quizzes:any}) {
+export default function Quizzes({newQuizId, quizzes, setPublished, setNewPublished}:{newQuizId:any, quizzes:any, setPublished:any, setNewPublished:any}) {
     const { cid } = useParams()
     const { isStudentView, toggleView } = useViewContext();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [quizToDelete, setQuizToDelete] = useState("")
 
-    const [published, setPublished] = useState(false); 
 
 
-    const handlePublishToggle = (quizId:any) => {
-        setPublished(prevState => !prevState); 
- 
-        if (!published) {
-            dispatch(publishQuiz({ quizId: quizId, courseId: cid }));
-        } else {
-            dispatch(unpublishQuiz({ quizId: quizId, courseId: cid }));
-        }
+    const fetchQuizzes = async () => {
+        const quizzes = await coursesClient.findQuizzesForCourse(cid as string);
+        dispatch(setQuizzes(quizzes));
+      };
+
+
+    const removeQuiz = async (quizId: string) => {
+    await quizzesClient.deleteQuiz(quizId);
+    dispatch(deleteQuiz(quizId));
+    };
+
+
+      useEffect(() => {
+        fetchQuizzes();
+      }, []);
+
+
+    const handlePublishToggle = async (quiz:any) => {
+        setNewPublished((prevState: any) => !prevState); 
+        await quizzesClient.updateQuiz({...quiz, published: setPublished});
+        dispatch(updateQuiz({ ...quiz, published: setPublished}));
+
     };
     return (
         <>
@@ -49,7 +64,7 @@ export default function Quizzes({newQuizId, quizzes}:{newQuizId:any, quizzes:any
                 <div className="row mb-5">
                     <div className="col">
                         <input type="search" className="form-control rounded-0 me-1 wd-search-bar" id="wd-search-assignment"
-                            placeholder="Search for Quiz" style={{ width: "300px" }} />
+                            placeholder="    Search for Quiz" style={{ width: "300px" }} />
                     </div>
 
                     <ProtectedContent>{isStudentView ?
@@ -101,7 +116,7 @@ export default function Quizzes({newQuizId, quizzes}:{newQuizId:any, quizzes:any
                                           
                                                     <FaTrash className="me-2" data-bs-toggle="modal" data-bs-target="#wd-add-quiz-dialog" onClick = {() => setQuizToDelete(quiz._id)}/>
                                                     <div className="d-flex align-items-center">
-                                                    <span className="me-1 position-relative" onClick={()=>handlePublishToggle(quiz._id)} >
+                                                    <span className="me-1 position-relative" onClick={()=>handlePublishToggle(quiz)} >
 
                                                     {quiz.published ? ( 
                                                         <FaCheckCircle style={{ top: "0.5px" }} className="me-1 text-success position-relative fs-5" />
@@ -116,8 +131,8 @@ export default function Quizzes({newQuizId, quizzes}:{newQuizId:any, quizzes:any
                                                     <QuizRemove
                                                             dialogTitle="Delete Quiz"
                                                             deleteQuiz={(id) => {
-                                                                dispatch(deleteQuiz(id));
-                                                                dispatch(deleteAllQuestions(id))
+                                                                removeQuiz(id);
+                                                                dispatch(deleteAllQuestions(id));
                                                                 setQuizToDelete(""); 
                                                             }}
                                                             quizId={quizToDelete} 

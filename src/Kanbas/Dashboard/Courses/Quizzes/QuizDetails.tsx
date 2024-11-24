@@ -37,7 +37,7 @@ export default function QuizDetails() {
                                 <h4 style={{ fontWeight: "bold" }}> {`${quiz.title}`} </h4>
                             </div>
 
-                            <div className="row">
+                            <div className="row ms-1">
                                 <table className="table">
                                     <thead>
                                         <tr className="table"><th>Due</th><th>Available From</th><th>Until</th><th>Points</th><th>Questions</th><th>Time Limit</th></tr>

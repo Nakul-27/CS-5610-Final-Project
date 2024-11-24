@@ -87,6 +87,8 @@ export default function Courses({ courses }: {
   const {quizzes} = useSelector((state: any) => state.quizzesReducer);
   const newQuizId = (quizzes.length + 1).toString();
 
+  const [setPublished, setNewPublished] = useState(false)
+  
   return (
     <div id="wd-courses">
       <h2 id="wd-course-title" className="text-danger"><FaAlignJustify className="me-4 fs-4 mb-1" />{course && course.name} &gt; {pathname.split("/")[4]} &gt; {pathname.split("/")[5]}</h2>
@@ -103,9 +105,9 @@ export default function Courses({ courses }: {
               <Route path="Assignments" element={<Assignments />} />
               <Route path="Assignments/:id" element={<AssignmentEditor />} />
               <Route path="Assignments/new" element={<AssignmentEditor />} />
-              <Route path="Quizzes" element={<Quizzes newQuizId={newQuizId} quizzes={quizzes}/>} />
+              <Route path="Quizzes" element={<Quizzes newQuizId={newQuizId} quizzes={quizzes} setPublished={setPublished} setNewPublished={setNewPublished}/>} />
               <Route path="Quizzes/:qid" element={<QuizDetails />} />
-              <Route path="Quizzes/:qid/Editor/*" element={<EditorNavigation newQuizId={newQuizId} quizzes={quizzes}/>} />
+              <Route path="Quizzes/:qid/Editor/*" element={<EditorNavigation newQuizId={newQuizId} quizzes={quizzes} setPublished={setPublished} setNewPublished={setNewPublished}/>} />
               <Route path="Quizzes/:qid/Preview/*" element={<QuizPreview />} />
               <Route path="Quizzes/:qid/PreviewResults" element={<QuizPreviewResults />} />
               <Route path="Quizzes/:qid/TakeQuiz" element={<TakeQuiz />} />
