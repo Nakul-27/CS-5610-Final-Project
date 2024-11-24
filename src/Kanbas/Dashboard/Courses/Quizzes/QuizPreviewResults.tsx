@@ -1,7 +1,6 @@
 import { FaArrowRight } from "react-icons/fa6";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router";
-import { divide } from "../../../Labs/Lab3/Math";
 import { useEffect, useState } from "react";
 
 export default function QuizResults() {

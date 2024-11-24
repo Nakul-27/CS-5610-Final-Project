@@ -4,8 +4,9 @@ import StudentViewButton from "./StudentViewButton";
 import { useViewContext } from "./View";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import ProtectedRouteFaculty from "../../Account/ProtectedRouteFaculty";
-import ProtectedRouteStudent from "../../Account/ProtectedRouteStudent";
+import ProtectedContent from "../../../Account/ProtectedContent";
+import ProtectedContentEnrollment from "../../../Account/ProtectedContentEnrollment";
+
 
 export default function QuizDetails() {
     const { cid, qid } = useParams()
@@ -21,7 +22,7 @@ export default function QuizDetails() {
 
     return (
         <>
-            <ProtectedRouteStudent>
+            <ProtectedContentEnrollment>
 
 
             <>{quizzes
@@ -76,21 +77,21 @@ export default function QuizDetails() {
                         </>
                     ))}</>
 
-            </ProtectedRouteStudent>
+            </ProtectedContentEnrollment>
 
 
 
 
 
-            <ProtectedRouteFaculty><StudentViewButton
+            <ProtectedContent><StudentViewButton
                 isStudentView={isStudentView}
                 onClick={toggleView}
-            /></ProtectedRouteFaculty>
+            /></ProtectedContent>
 
             <div className="container-fluid" id="wd-quiz-details" >
   
 
-            <ProtectedRouteFaculty>{isStudentView ?
+            <ProtectedContent>{isStudentView ?
                     (<><div className="p-5 row d-flex justify-content-center">
 
                         <div className="col-auto"><Link to={`/Kanbas/Courses/${cid}/Quizzes/${qid}/Preview`}><button id="wd-preview-btn" className="btn btn-lg btn-secondary fs-6 rounded-1 float-end me-1">
@@ -276,7 +277,7 @@ export default function QuizDetails() {
 
 
 
-                }</ProtectedRouteFaculty>
+                }</ProtectedContent>
 
 
 

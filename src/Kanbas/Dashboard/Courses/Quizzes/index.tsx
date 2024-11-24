@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { IoEllipsisVertical, IoRocketOutline } from "react-icons/io5";
-import AssignmentControlButtons from "../Assignments/AssignmentControlButtons";
+import AssignmentControlButtons from "../Assignments/AssignmentsControlButtons"
 import { useState } from "react";
 import StudentViewButton from "./StudentViewButton";
 import { FaCircle, FaPlus } from "react-icons/fa6";
@@ -11,9 +11,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { deleteQuiz, publishQuiz, unpublishQuiz } from "./quizzesReducer";
 import { FaCheckCircle, FaTrash } from "react-icons/fa";
 import QuizRemove from "./QuizRemove";
-import ProtectedRouteFaculty from "../../Account/ProtectedRouteFaculty";
+import ProtectedContent from "../../../Account/ProtectedContent";
+import ProtectedContentEnrollment from "../../../Account/ProtectedContentEnrollment";
 import { deleteAllQuestions} from "./questionsReducer";
-import ProtectedRouteStudent from "../../Account/ProtectedRouteStudent";
+
 import GreenCheckmark from "../Modules/GreenCheckmark";
 import { CiNoWaitingSign } from "react-icons/ci";
 
@@ -39,10 +40,10 @@ export default function Quizzes({newQuizId, quizzes}:{newQuizId:any, quizzes:any
     };
     return (
         <>
-            <ProtectedRouteFaculty><StudentViewButton
+            <ProtectedContent><StudentViewButton
                 isStudentView={isStudentView}
                 onClick={toggleView}
-            /></ProtectedRouteFaculty>
+            /></ProtectedContent>
 
             <div id="wd-quizzes" className="p-3">
                 <div className="row mb-5">
@@ -51,7 +52,7 @@ export default function Quizzes({newQuizId, quizzes}:{newQuizId:any, quizzes:any
                             placeholder="Search for Quiz" style={{ width: "300px" }} />
                     </div>
 
-                    <ProtectedRouteFaculty>{isStudentView ?
+                    <ProtectedContent>{isStudentView ?
                         (<><div className="col mb-3">
 
                             <div className="col">
@@ -66,7 +67,7 @@ export default function Quizzes({newQuizId, quizzes}:{newQuizId:any, quizzes:any
                                     <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
                                     Quizzes</button>
                             </div>
-                        </div> <hr /></>) : null}</ProtectedRouteFaculty>
+                        </div> <hr /></>) : null}</ProtectedContent>
                 </div>
 
 
@@ -78,7 +79,7 @@ export default function Quizzes({newQuizId, quizzes}:{newQuizId:any, quizzes:any
                                 Assignment Quizzes
                             </div>
                             <ul className="wd-assignments list-group rounded-0">
-                            <ProtectedRouteFaculty>{quizzes
+                            <ProtectedContent>{quizzes
                                     .filter((quiz: any) => quiz.course === cid)
                                     .map((quiz: any) => (
                                         <li className="wd-assignment list-group-item p-3 ps-1 d-flex align-items-center">
@@ -124,10 +125,10 @@ export default function Quizzes({newQuizId, quizzes}:{newQuizId:any, quizzes:any
                                                 </div> : null}
                                         </li>
                                     ))
-                                }</ProtectedRouteFaculty>
+                                }</ProtectedContent>
 
 
-                        <ProtectedRouteStudent>{quizzes
+                        <ProtectedContentEnrollment>{quizzes
                                     .filter((quiz: any) => quiz.course === cid)
                                     .map((quiz: any) => (
                                         <>
@@ -148,7 +149,7 @@ export default function Quizzes({newQuizId, quizzes}:{newQuizId:any, quizzes:any
                                             
                                         </li>)}</>
                                     ))
-                                }</ProtectedRouteStudent>
+                                }</ProtectedContentEnrollment>
                             </ul>
                         </li >
                     </ul>
