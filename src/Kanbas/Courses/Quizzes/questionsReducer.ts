@@ -37,6 +37,14 @@ const questionsSlice = createSlice({
 
             state.questions = state.questions.filter((q: any) => q._id !== questionId)}},
 
+        deleteAllQuestions: (state, {payload: quizId}) => {
+
+            if (quizId) {
+                state.questions = state.questions.filter((q:any) => q.quizId !== quizId)
+            }
+
+        },
+
 
         updateQuestion: (state, action) => {
 
@@ -64,5 +72,5 @@ const questionsSlice = createSlice({
     }
 });
 
-export const { setQuestions, addQuestion, deleteQuestion, updateQuestion, editQuestion, resetQuestions } = questionsSlice.actions;
+export const { setQuestions, addQuestion, deleteQuestion, deleteAllQuestions, updateQuestion, editQuestion, resetQuestions } = questionsSlice.actions;
 export default questionsSlice.reducer;

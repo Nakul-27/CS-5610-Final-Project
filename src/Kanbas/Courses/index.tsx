@@ -15,6 +15,8 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import QuizPreview from "./Quizzes/QuizPreview";
 import QuizPreviewResults from "./Quizzes/QuizPreviewResults";
+import TakeQuiz from "./Quizzes/TakeQuiz";
+import QuizResults from "./Quizzes/QuizResults";
 
 export default function Courses({ courses }: {
   courses: any[];
@@ -24,6 +26,7 @@ export default function Courses({ courses }: {
   const { pathname } = useLocation();
   const {quizzes} = useSelector((state: any) => state.quizzesReducer);
   const newQuizId = (quizzes.length + 1).toString();
+
   return (
     <div id="wd-courses">
       <h2 id="wd-course-title" className="text-danger"><FaAlignJustify className="me-4 fs-4 mb-1" />{course && course.name} &gt; {pathname.split("/")[4]} &gt; {pathname.split("/")[5]}</h2>
@@ -40,11 +43,13 @@ export default function Courses({ courses }: {
               <Route path="Assignments" element={<Assignments />} />
               <Route path="Assignments/:id" element={<AssignmentEditor />} />
               <Route path="Assignments/new" element={<AssignmentEditor />} />
-              <Route path="Quizzes" element={<Quizzes newQuizId={newQuizId} quizzes={quizzes} />} />
+              <Route path="Quizzes" element={<Quizzes newQuizId={newQuizId} quizzes={quizzes}/>} />
               <Route path="Quizzes/:qid" element={<QuizDetails />} />
               <Route path="Quizzes/:qid/Editor/*" element={<EditorNavigation newQuizId={newQuizId} quizzes={quizzes}/>} />
               <Route path="Quizzes/:qid/Preview/*" element={<QuizPreview />} />
-              <Route path="Quizzes/:qid/Results" element={<QuizPreviewResults />} />
+              <Route path="Quizzes/:qid/PreviewResults" element={<QuizPreviewResults />} />
+              <Route path="Quizzes/:qid/TakeQuiz" element={<TakeQuiz />} />
+              <Route path="Quizzes/:qid/QuizResults" element={<QuizResults />} />
               <Route path="People" element={<PeopleTable />} />
             </Routes>
           </ViewProvider>

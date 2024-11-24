@@ -1,12 +1,9 @@
-   
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
 import { addResults } from "./resultsReducer";
 import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
 import { FaRegQuestionCircle } from "react-icons/fa";
-import { CgDanger } from "react-icons/cg";
-import { GrEdit } from "react-icons/gr";
 
 export default function TakeQuiz() {
     const { cid, qid} = useParams()
@@ -47,7 +44,7 @@ export default function TakeQuiz() {
 
 
         dispatch(addResults(newResult))
-        navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/PreviewResults`)
+        navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizResults`)
 
     }
 
@@ -120,7 +117,7 @@ export default function TakeQuiz() {
     
         return "00:00:00";  
     };
-  
+
     const startTimer = (timeLimit: number) => {
         setRemainingTime(timeLimit * 60);
         setIsTimeUp(false); 
@@ -172,10 +169,7 @@ export default function TakeQuiz() {
             <div className="row mb-2">
                 <h4 style={{ fontWeight: "bold" }}> {`${quiz.title}`} </h4>
             </div>
-            <div className="row bg-danger mb-5 bg-opacity-25 rounded" >
-             <div className="col-auto"><CgDanger className="mt-3 text-danger" /></div><div className="col-auto mt-3"><p className="text-danger">This is a preview of the published version of the quiz</p></div>
-
-             </div>
+            <hr />
 
 
             <div className="row mb-2">
@@ -491,22 +485,10 @@ export default function TakeQuiz() {
                     </div>
 
                 <div className="row">
-                    <div className="row mb-2"><h5>Remaining Time</h5></div>
-                    <div className="row ms-2 mb-2">{!isTimeUp ? formatTime(remainingTime ?? 0) : null}</div>
+                    <div className="row"><h5>Remaining Time</h5></div>
+                    {!isTimeUp ? formatTime(remainingTime ?? 0) : null}
 
                 </div>
-
-                <div className="row border bg-light mb-4">
-                            <div className="col-auto mt-3 ms-1"><GrEdit /></div>
-                            <div className="col-auto mt-3">
-                                <p
-                                    style={{ cursor: "pointer", color: "blue", textDecoration: "underline" }}
-                                    onClick={() => navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/Editor/Details`)}
-                                >
-                                    Keep editing this quiz
-                                </p>
-                            </div>
-                        </div>
 
 
             </div>

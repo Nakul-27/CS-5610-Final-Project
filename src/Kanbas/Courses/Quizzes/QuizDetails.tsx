@@ -1,9 +1,11 @@
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { GrEdit } from "react-icons/gr";
 import StudentViewButton from "./StudentViewButton";
 import { useViewContext } from "./View";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import ProtectedRouteFaculty from "../../Account/ProtectedRouteFaculty";
+import ProtectedRouteStudent from "../../Account/ProtectedRouteStudent";
 
 export default function QuizDetails() {
     const { cid, qid } = useParams()
@@ -11,17 +13,86 @@ export default function QuizDetails() {
 
     const { isStudentView, toggleView } = useViewContext();
 
+    const navigate = useNavigate()
+    const { currentUserId } = useSelector((state: any) => state.accountReducer);
+    
+    const {results} = useSelector((state:any)=> state.resultsReducer)
+    const result = results.find((res:any)=>res.quizId === qid && res.courseId=== cid && res.userId === currentUserId)
+
     return (
         <>
-            <StudentViewButton
+            <ProtectedRouteStudent>
+
+
+            <>{quizzes
+                    .filter((quiz: any) => quiz.course == cid)
+                    .filter((quiz: any) => quiz._id == qid)
+                    .map((quiz: any) => (
+                        <>
+                       
+
+                            <div className="row">
+                                <h4 style={{ fontWeight: "bold" }}> {`${quiz.title}`} </h4>
+                            </div>
+
+                            <div className="row">
+                                <table className="table">
+                                    <thead>
+                                        <tr className="table"><th>Due</th><th>Available From</th><th>Until</th><th>Points</th><th>Questions</th><th>Time Limit</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr className="table"><td>{`${quiz.due_date}`}</td><td>{`${quiz.available_from}`}</td><td>{`${quiz.available_until}`}</td><td>{`${quiz.points}`}</td><td>{`${quiz.number_questions}`}</td><td>{`${quiz.time_limit}`} Minutes</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {(result?.attempt==null )&& (
+                                <div className="row-auto d-flex justify-content-center">
+                                <button id="wd-takequiz-btn" className="btn btn-lg btn-danger fs-6 rounded-1 me-1"
+                                onClick={() =>{navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/TakeQuiz`);}}>
+                                    Take Quiz</button>
+                            </div>)}
+
+                            {result?.attempt>=quiz.number_attempts && (
+                                <div className="row-auto d-flex justify-content-center">
+                                <button id="wd-takequiz-btn" className="btn btn-lg btn-secondary fs-6 rounded-1 me-1"
+                                onClick={() =>{navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizResults`);}}>
+                                    See Last Attempt</button>
+                                </div>
+                            )}
+
+                            {(result?.attempt<quiz.number_attempts) && (
+                                <div className="row-auto d-flex justify-content-center">
+                                <button id="wd-takequiz-btn" className="btn btn-lg btn-secondary fs-6 rounded-1 me-1"
+                                onClick={() =>{navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizResults`);}}>
+                                    See Last Attempt</button>
+                                
+                                <button id="wd-takequiz-btn" className="btn btn-lg btn-danger fs-6 rounded-1 me-1"
+                                onClick={() =>{navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/TakeQuiz`);}}>
+                                    New Attempt</button>
+                                </div>
+                            )}
+
+                        </>
+                    ))}</>
+
+            </ProtectedRouteStudent>
+
+
+
+
+
+            <ProtectedRouteFaculty><StudentViewButton
                 isStudentView={isStudentView}
                 onClick={toggleView}
-            />
+            /></ProtectedRouteFaculty>
 
             <div className="container-fluid" id="wd-quiz-details" >
+  
 
-                {isStudentView ?
+            <ProtectedRouteFaculty>{isStudentView ?
                     (<><div className="p-5 row d-flex justify-content-center">
+
                         <div className="col-auto"><Link to={`/Kanbas/Courses/${cid}/Quizzes/${qid}/Preview`}><button id="wd-preview-btn" className="btn btn-lg btn-secondary fs-6 rounded-1 float-end me-1">
                             Preview</button></Link></div>
 
@@ -205,7 +276,9 @@ export default function QuizDetails() {
 
 
 
-                }
+                }</ProtectedRouteFaculty>
+
+
 
             </div>
         </>

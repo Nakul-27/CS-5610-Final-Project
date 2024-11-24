@@ -50,8 +50,8 @@ export default function QuizEditorDetails({setQuizTitle, setQuizAvailableFrom, s
                                     </div>
                                     <div className="col">
                                         <select id="wd-quiz-editor-type" className="form-select" onChange={(e) => setNewQuizType(e.target.value.toString())}>
-                                            <option selected value="Choose Quiz Type">Choose Quiz Type</option>
-                                            <option value="Graded Quiz">Graded Quiz</option>
+                                            {/* <option selected value="Choose Quiz Type">Choose Quiz Type</option> */}
+                                            <option selected value="Graded Quiz">Graded Quiz</option>
                                             <option value="Practice Quiz">Practice Quiz</option>
                                             <option value="Graded Survey">Graded Survey</option>
                                             <option value="Ungraded Survey">Ungraded Survey</option>
@@ -65,8 +65,8 @@ export default function QuizEditorDetails({setQuizTitle, setQuizAvailableFrom, s
                                     </div>
                                     <div className="col">
                                         <select id="wd-quiz-editor-group" className="form-select" onChange={(e) => setNewQuizAssignmentGroup(e.target.value.toString())}>
-                                            <option selected value="Choose Assignment Group">Choose Assignment Group</option>
-                                            <option value="QUIZZES">QUIZZES</option>
+                                            {/* <option selected value="Choose Assignment Group">Choose Assignment Group</option> */}
+                                            <option selected value="QUIZZES">QUIZZES</option>
                                             <option value="EXAMS">EXAMS</option>
                                             <option value="ASSIGNMENTS">ASSIGNMENTS</option>
                                             <option value="PROJECTS">PROJECTS</option>

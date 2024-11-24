@@ -29,6 +29,7 @@ export default function QuizResults() {
                     <h4 style={{ fontWeight: "bold" }}> {`${quiz.title}`} </h4>
                 </div>
                 <hr />
+
                 <div className="row mb-3">
                     <table className="table table-borderless mb-1">
                         <tbody>

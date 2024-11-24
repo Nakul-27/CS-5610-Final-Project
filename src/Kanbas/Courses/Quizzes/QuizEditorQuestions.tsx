@@ -24,8 +24,11 @@ export default function QuizEditorQuestions({quiz, setQuizQuestions,setNewQuizQu
     const [newQuestionDescription, setNewQuestionDescription] = useState("");
     const [newQuestionAnswers, setNewQuestionAnswers] = useState<string[]>([""]);
     const [newQuestionCorrectAnswer, setNewQuestionCorrectAnswer] = useState("");
+    const [newQuestionCorrectAnswerList, setNewQuestionCorrectAnswerList] = useState<string[]>([""]);
     
     const [currentEditingQuestionId, setCurrentEditingQuestionId] = useState(null);
+
+    const [correctAnswerIsList, setcorrectAnswerIsList] = useState(false);
 
 
 //----------------------reducer functions for answers (adding/editing/deleting possible answers for each question)--------------//
@@ -39,6 +42,10 @@ export default function QuizEditorQuestions({quiz, setQuizQuestions,setNewQuizQu
         setNewQuestionAnswers([...newQuestionAnswers, ""]);
     };
 
+    const handleAddAnotherAnswerList = () => {
+        setNewQuestionCorrectAnswerList((prevList) => [...prevList, ""]);
+    };
+
     const handleDeleteAnswer = (index: number) => {
         const updatedAnswers = newQuestionAnswers.filter((_, i) => i !== index);
         setNewQuestionAnswers(updatedAnswers);
@@ -47,9 +54,28 @@ export default function QuizEditorQuestions({quiz, setQuizQuestions,setNewQuizQu
     const handleCorrectAnswerChange = (index: number) => {
         setNewQuestionCorrectAnswer(newQuestionAnswers[index]);
     };
+
+    // const handleCorrectAnswerChangeList = ()=> {
+    //     setNewQuestionCorrectAnswerList([...newQuestionAnswers, ""])
+
+    // }
+
+    const handleCorrectAnswerChangeList = (index: number, value: string) => {
+        setNewQuestionCorrectAnswerList((prevList) => {
+            const updatedList = [...prevList];
+            updatedList[index] = value; 
+            return updatedList;
+        });
+    };
 //------------------------------------------------------------------------------------------------------------------------------//
 
     const handleAddOrUpdateQuestion = () => {
+        let correct_answers: (string | string[]) = [];
+        if (correctAnswerIsList) {
+            correct_answers = newQuestionCorrectAnswerList
+        } else {
+            correct_answers = newQuestionCorrectAnswer
+        }
         const newQuestion = {
             _id: (questions.length + 1).toString(),
             quizId: qid,
@@ -59,7 +85,7 @@ export default function QuizEditorQuestions({quiz, setQuizQuestions,setNewQuizQu
             points: newQuestionPoints,
             description: newQuestionDescription,
             answers: newQuestionAnswers,
-            correct_answer: newQuestionCorrectAnswer,
+            correct_answer: correct_answers,
         };
         const updatedQ = {
             _id: currentEditingQuestionId,
@@ -70,7 +96,7 @@ export default function QuizEditorQuestions({quiz, setQuizQuestions,setNewQuizQu
             points: newQuestionPoints,
             description: newQuestionDescription,
             answers: newQuestionAnswers,
-            correct_answer: newQuestionCorrectAnswer,
+            correct_answer: correct_answers,
         }
     
         if (currentEditingQuestionId) {
@@ -83,8 +109,12 @@ export default function QuizEditorQuestions({quiz, setQuizQuestions,setNewQuizQu
 
         resetQuestion();
         setShowQuestionInput(false);
+
+        setcorrectAnswerIsList(false)
         
     };
+
+
 
 
 
@@ -96,6 +126,7 @@ export default function QuizEditorQuestions({quiz, setQuizQuestions,setNewQuizQu
         setNewQuestionDescription("");
         setNewQuestionAnswers([""]);
         setNewQuestionCorrectAnswer("");
+        setNewQuestionCorrectAnswerList([""]);
     }
 
     const handleEditQuestion = (question: any) => {
@@ -105,6 +136,7 @@ export default function QuizEditorQuestions({quiz, setQuizQuestions,setNewQuizQu
         setNewQuestionDescription(question.description);
         setNewQuestionAnswers(question.answers);
         setNewQuestionCorrectAnswer(question.correct_answer);
+        setNewQuestionCorrectAnswerList(question.correct_answer);
         setCurrentEditingQuestionId(question._id);
         setShowQuestionInput(true);
     };
@@ -119,6 +151,7 @@ export default function QuizEditorQuestions({quiz, setQuizQuestions,setNewQuizQu
     
     return (
         <div className="container-fluid">
+            
 
 
             <div id="wd-quiz-editor-questions" className="p-2 row">
@@ -314,7 +347,7 @@ export default function QuizEditorQuestions({quiz, setQuizQuestions,setNewQuizQu
                         {/* ---------------------------------------FILL IN THE BLANKS----------------------------------------- */}
                         {newQuestionType === "Fill in the Blank" && (
                             <>
-                        
+                            
                             <div className="row">
                                 <p>Enter your question text, then define all possible correct answers for the blank. Students will see the question followed by a
                                     small text box to type their answer
@@ -334,17 +367,34 @@ export default function QuizEditorQuestions({quiz, setQuizQuestions,setNewQuizQu
                                     <h5 style={{ fontWeight: "bold" }}>Answer:</h5>
                                 </div>
                                 {newQuestionAnswers.map((answer, index) => (
-                                    <div className="row mb-5" key={index}>
-                                        <div className="col-auto">
-                                            <label htmlFor={`wd-answer-${index}`} className="form-label">Correct Answer</label>
-                                        </div>
-                                        <div className="col-auto">
-                                        <input type="text" id={`wd-answer-${index}`} value={newQuestionCorrectAnswer}
-                                        onChange={(e) => {setNewQuestionCorrectAnswer(e.target.value)}}/>
-                                        </div>
-                                        </div>
+                                    <div className="row mb-1" key={index}>
+                                        <ul className="list-group rounded-0 border">
+                                            <li className="list-group-item border-0">
+                                                <div className="row">
 
+                                                    <div className="col-auto">
+                                                        <label htmlFor={`wd-answer-${index}`} className="form-label">Possible Answer</label>
+                                                    </div>
+                                                    <div className="col-auto">
+                                                        <input id={`wd-answer-${index}`} type="text" className="form-control me-3"
+                                                            value={answer}
+                                                            onChange={(e) => {
+                                                                handleAnswerChange(index, e.target.value); 
+                                                                handleCorrectAnswerChangeList(index, e.target.value); 
+                                                                setcorrectAnswerIsList(true);
+                                                            }} />
+                                                    </div><FaTrash className="col-auto mt-2" onClick={() => handleDeleteAnswer(index)} />
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 ))}
+                                <div className="row-auto float-end">
+                                    <button id="wd-add-answer-btn" className="btn btn-link btn-lg fs-6 rounded-1 float-end me-1" onClick={handleAddAnotherAnswer}>
+                                        <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
+                                        Add Another Answer
+                                    </button>
+                                </div>
 
                             </>
                         )}

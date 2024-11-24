@@ -23,10 +23,10 @@ export default function EditorNavigation({newQuizId, quizzes}:{newQuizId:any, qu
     const [setQuizPoints, setNewQuizPoints] = useState(quiz ? quiz.points : "0")
     const [setQuizNumberQuestions, setNewQuizNumberQuestions] = useState(quiz ? quiz.number_questions : "0")
     const [setQuizScore, setNewQuizScore] = useState(quiz ? quiz.score : "")
-    const [setQuizType, setNewQuizType] = useState(quiz ? quiz.type : "None")
-    const [setQuizAssignmentGroup, setNewQuizAssignmentGroup] = useState(quiz ? quiz.assignment_group : "None")
+    const [setQuizType, setNewQuizType] = useState(quiz ? quiz.type : "Graded Quiz")
+    const [setQuizAssignmentGroup, setNewQuizAssignmentGroup] = useState(quiz ? quiz.assignment_group : "QUIZZES")
     const [setQuizShuffle, setNewQuizShuffle] = useState(quiz ? quiz.shuffle_answers : true)
-    const [setQuizTimeLimit, setNewQuizTimeLimit] = useState(quiz ? quiz.time_limit : "0")
+    const [setQuizTimeLimit, setNewQuizTimeLimit] = useState(quiz ? quiz.time_limit : "20")
     const [setQuizMultipleAttempts, setNewQuizMultipleAttempts] = useState(quiz ? quiz.multiple_attempts : false)
     const [setQuizNumberAttempts, setNewQuizNumberAttempts] = useState(quiz ? quiz.number_attempts : "1")
     const [setQuizShowCorrectAnswers, setNewQuizShowCorrectAnswers] = useState(quiz ? quiz.show_correct_answers : "Yes")
@@ -34,6 +34,7 @@ export default function EditorNavigation({newQuizId, quizzes}:{newQuizId:any, qu
     const [setQuizOneQuestionAtATime, setNewQuizOneQuestionAtATime] = useState(quiz ? quiz.one_question_at_a_time : true)
     const [setQuizWebcamRequired, setNewQuizWebcamRequired] = useState(quiz ? quiz.webcam_required : false)
     const [setQuizLockQuestions, setNewQuizLockQuestions] = useState(quiz ? quiz.lock_questions_after_answering : false)
+
     const [setQuizDescription, setNewQuizDescription] = useState(quiz ? quiz.description : "")
     const [setQuizQuestions, setNewQuizQuestions] = useState(quiz ? quiz.questions : [])
 
@@ -62,6 +63,13 @@ export default function EditorNavigation({newQuizId, quizzes}:{newQuizId:any, qu
 
     const handleUpdateQuiz = () => {
 
+ 
+        const newQuizQuestions = filteredQuestions.length;
+
+        const newQuizPoints = filteredQuestions.reduce((total: number, question: any) => total + parseInt(question.points, 10), 0);
+
+        
+
         if (quiz) {
             dispatch(updateQuiz({
                 _id: qid,
@@ -71,8 +79,8 @@ export default function EditorNavigation({newQuizId, quizzes}:{newQuizId:any, qu
                 available_from: setQuizAvailableFrom,
                 available_until: setQuizAvailableUntil,
                 due_date: setQuizDueDate,
-                points: setQuizPoints,
-                number_questions: setQuizNumberQuestions,
+                points: newQuizPoints,
+                number_questions: newQuizQuestions,
                 score: setQuizScore,
                 quiz_type: setQuizType,
                 assignment_group: setQuizAssignmentGroup,
@@ -86,6 +94,7 @@ export default function EditorNavigation({newQuizId, quizzes}:{newQuizId:any, qu
                 webcam_required: setQuizWebcamRequired,
                 lock_questions_after_answering: setQuizLockQuestions,
                 description: setQuizDescription,
+                published: false,
                 questions: setQuizQuestions,
             }))
         
@@ -98,8 +107,8 @@ export default function EditorNavigation({newQuizId, quizzes}:{newQuizId:any, qu
                 available_from: setQuizAvailableFrom,
                 available_until: setQuizAvailableUntil,
                 due_date: setQuizDueDate,
-                points: setQuizPoints,
-                number_questions: setQuizNumberQuestions,
+                points: newQuizPoints,
+                number_questions: newQuizQuestions,
                 score: setQuizScore,
                 quiz_type: setQuizType,
                 assignment_group: setQuizAssignmentGroup,
@@ -113,6 +122,7 @@ export default function EditorNavigation({newQuizId, quizzes}:{newQuizId:any, qu
                 webcam_required: setQuizWebcamRequired,
                 lock_questions_after_answering: setQuizLockQuestions,
                 description: setQuizDescription,
+                published: false,
                 questions: setQuizQuestions,}))   
         }
     

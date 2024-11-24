@@ -5,7 +5,7 @@ const ProtectedRouteStudent = ({ children }: {
 }) => {
     const { currentUser } = useSelector((state: any) => state.accountReducer);
 
-    if (currentUser?.role === "STUDENT") {
+    if (currentUser?.role === "STUDENT" || currentUser?.role === "TA" ) {
         return children;
     } else {
         return null;

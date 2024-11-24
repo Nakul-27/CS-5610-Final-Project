@@ -34,13 +34,14 @@ const quizzesSlice = createSlice({
                 webcam_required: action.payload.webcam_required,
                 lock_questions_after_answering: action.payload.lock_questions_after_answering,
                 description: action.payload.description,
+                published: action.payload.published,
                 questions: action.payload.questions,
             };
             state.quizzes = [...state.quizzes, newQuiz];
 
         },
         deleteQuiz: (state, { payload: quizId }) => {
-            console.log(state.quizzes)
+            
             state.quizzes = state.quizzes.filter((q: any) => q._id !== quizId)
 
         },
@@ -55,11 +56,31 @@ const quizzesSlice = createSlice({
             state.quizzes = state.quizzes.map((q: any) =>
                 q._id === quizId ? { ...q, editing: true } : q
             ) as any;
+        },
+
+        publishQuiz: (state, { payload: { quizId, courseId } }) => {
+            // const quiz = state.quizzes.find((q:any) => q._id === quizId && q.course === courseId);
+            // if (quiz) {
+            //     quiz.published = true;
+            // }
+            state.quizzes = state.quizzes.map((quiz:any) => 
+                quiz._id === quizId && quiz.course === courseId ? { ...quiz, published: true } : quiz
+              );
+        },
+        unpublishQuiz: (state, { payload: { quizId, courseId } }) => {
+            // const quiz = state.quizzes.filter((q:any) => q._id === quizId && q.course === courseId);
+ 
+            // if (quiz) {
+            //     quiz.published = false;
+            // }
+            state.quizzes = state.quizzes.map((quiz:any) => 
+                quiz._id === quizId && quiz.course === courseId ? { ...quiz, published: false } : quiz
+              );
         }
     }
 });
 
-export const { addQuiz, deleteQuiz, updateQuiz, editQuiz} = quizzesSlice.actions;
+export const { addQuiz, deleteQuiz, updateQuiz, editQuiz, publishQuiz, unpublishQuiz} = quizzesSlice.actions;
 export default quizzesSlice.reducer;
 
 

@@ -8,8 +8,11 @@ import * as db from "./Database";
 import "./styles.css";
 import { useState } from "react";
 import ProtectedRoute from "./Account/ProtectedRoute";
+import { useSelector } from "react-redux";
 
 export default function Kanbas() {
+
+    
     const [courses, setCourses] = useState<any[]>(db.courses);
     const [course, setCourse] = useState<any>({
         _id: "1234", name: "New Course", number: "New Number",
